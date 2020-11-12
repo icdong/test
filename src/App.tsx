@@ -1,70 +1,68 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
+import { Button, Select } from 'antd';
+import './App.css'
+import { useFetchData } from './useFetchData';
 
-import { Button } from 'antd';
-import { data } from './data'
+function App() {
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
-console.log(data);
+    let list: object[] = []
+    let total: number = 0
+    let allPage = 0
+    let { response, isLoading, error } = useFetchData('/api/getlist', page, pageSize)
 
-type IProps = Readonly<{
-  onChange?: Function;
-}>;
-
-const initialState = { 
-  clickCount: 0,
-  data: [],
-};
-type IState = Readonly<typeof initialState>;
-
-class App extends Component<IProps, IState> {
-  readonly state: IState = initialState;
-  
-  componentWillReceiveProps(nextProps: any) {
-    const { value } = nextProps;
-    if (value) {
-      this.setState({
-        clickCount: value
-      })
+    if (response !== undefined) {
+        list = response.data.list
+        total = response.data.total
+        allPage = Math.ceil(total/pageSize)
     }
-  }
 
-  // componentDidMount() {
-  //   // 模拟ajax
+    const handleChange = (value: number) => {
+      setPageSize(value)
+    }
+    // 上一页
+    const prev = () => {
+        if (page === 1) return
+        setPage(page - 1)
+    }
+    // 下一页
+    const next = () => {
+        if (page === allPage) return
+        setPage(page + 1)
+    }
 
-  // }
-
-  private handleIncrement = () => {
-    const { onChange } = this.props;
-    const { clickCount } = this.state;
-    this.setState({
-      clickCount: clickCount + 1,
-    });  
-    onChange && onChange(clickCount + 1);
-  };
-  private handleDecrement = () => {
-    const { onChange } = this.props;
-    const { clickCount } = this.state;
-    this.setState({
-      clickCount: clickCount - 1,
-    });  
-    onChange && onChange(clickCount - 1);
-  }
-
-  render() {
-    const { clickCount } = this.state;
-    return (
-      <div>
-        <p>You've clicked me {clickCount} times!</p>
-        <ul>
-          <li>aaaaa</li>
-          <li>bbbbb</li>
-        </ul>
-        <Button type="primary" onClick={this.handleIncrement}>上一页</Button>
-        <Button type="primary" onClick={this.handleDecrement}>下一页</Button>
-      </div>
+    const { Option } = Select;
+    const listItems = list.map((item:any) =>
+        <li key={item['id']}>
+            {item['name']}
+        </li>
     );
-  }
+    return (
+        <div>
+            当前页：{page}; 总条数：{total};总页数：{allPage}
 
-  
+            <Select className="margin_left" value={pageSize} style={{ width: 120 }} onChange={handleChange}>
+              <Option value="5">5条/页</Option>
+              <Option value="10">10条/页</Option>
+              <Option value="15">15条/页</Option>
+            </Select>
+
+            <Button className="margin_left" type="primary" onClick={prev}>上一页</Button>
+            <Button className="margin_left" type="primary" onClick={next}>下一页</Button>
+
+            {/* loading处理*/}
+            {isLoading && <p>loading...</p>}
+
+            {/* 错误处理*/}
+            {error && <p>error!</p>}
+
+            {
+                (!isLoading && !isLoading)
+                && <ul>{listItems}</ul>
+            }
+        </div>
+    );
 }
 
 export default App;
