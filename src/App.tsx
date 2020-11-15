@@ -4,12 +4,13 @@ import './App.css'
 import { useFetchData } from './useFetchData';
 
 function App() {
+    // 用法
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
 
     let list: object[] = []
     let total: number = 0
-    let allPage = 0
+    let allPage: number = 0
     let { response, isLoading, error } = useFetchData('/api/getlist', page, pageSize)
 
     if (response !== undefined) {
