@@ -15,11 +15,11 @@ function App() {
     if (response !== undefined) {
         list = response.data.list
         total = response.data.total
-        allPage = Math.ceil(total/pageSize)
+        allPage = Math.ceil(total / pageSize)
     }
 
     const handleChange = (value: number) => {
-      setPageSize(value)
+        setPageSize(value)
     }
     // 上一页
     const prev = () => {
@@ -33,7 +33,7 @@ function App() {
     }
 
     const { Option } = Select;
-    const listItems = list.map((item:any) =>
+    const listItems = list.map((item: any) =>
         <li key={item['id']}>
             {item['name']}
         </li>
@@ -43,9 +43,9 @@ function App() {
             当前页：{page}; 总条数：{total};总页数：{allPage}
 
             <Select className="margin_left" value={pageSize} style={{ width: 120 }} onChange={handleChange}>
-              <Option value="5">5条/页</Option>
-              <Option value="10">10条/页</Option>
-              <Option value="15">15条/页</Option>
+                <Option value="5">5条/页</Option>
+                <Option value="10">10条/页</Option>
+                <Option value="15">15条/页</Option>
             </Select>
 
             <Button className="margin_left" type="primary" onClick={prev}>上一页</Button>
